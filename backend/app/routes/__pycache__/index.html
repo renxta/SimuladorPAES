@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Simulador PAES — Comparador de Opciones</title>
+  <style>
+    :root{
+      --bg: #0b1220;
+      --panel:#111a2b;
+      --muted:#9fb2d0;
+      --text:#eff6ff;
+      --ok:#15803d;
+      --err:#cc0000;
+      --brand:#2d6cdf;
+      --chip:#1b2a44;
+      --input:#0e1726;
+      --ring:#3b82f6;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      background: radial-gradient(1200px 800px at 10% -20%, #12203a 0%, #0b1220 45%, #09101d 100%);
+      color:var(--text);
+      font: 16px/1.35 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial;
+      letter-spacing:.2px;
+    }
+    .wrap{max-width:1100px;margin:48px auto;padding:0 20px}
+    header{
+      display:flex;align-items:center;gap:12px;margin-bottom:18px
+    }
+    .logo{
+      width:44px;height:44px;border-radius:12px;
+      display:grid;place-items:center;background:#1b2a44;color:#7cc7ff;
+      font-weight:700;box-shadow:0 10px 30px rgba(0,0,0,.35), inset 0 0 40px rgba(60,140,255,.15);
+    }
+    h1{margin:0;font-size:28px;font-weight:800}
+    .chips{display:flex;gap:10px;flex-wrap:wrap;margin-left:auto}
+    .chip{
+      font-weight:600;color:#eaf1ff;background:var(--chip);
+      padding:.45rem .7rem;border-radius:.8rem;border:1px solid rgba(255,255,255,.06);
+      box-shadow: 0 2px 10px rgba(0,0,0,.25);
+      display:inline-flex;align-items:center;gap:.5rem;
+    }
+    .status{transition:.2s background-color}
+    .panel{
+      background:var(--panel);
+      border:1px solid rgba(255,255,255,.06);
+      box-shadow: 0 30px 70px rgba(3,8,20,.35), inset 0 1px 0 rgba(255,255,255,.04);
+      border-radius:16px;padding:26px;
+    }
+    .grid{display:grid;gap:14px}
+    @media(min-width:880px){
+      .grid.cols-3{grid-template-columns:repeat(3, 1fr)}
+      .grid.cols-2{grid-template-columns:repeat(2, 1fr)}
+    }
+    label{font-size:13px;color:var(--muted);display:block;margin:4px 2px 8px}
+    input, select{
+      width:100%;padding:14px 14px;border-radius:12px;background:var(--input);
+      color:var(--text);border:1px solid rgba(255,255,255,.06);outline:none;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    input:focus,select:focus{border-color:var(--ring);box-shadow:0 0 0 3px rgba(59,130,246,.25)}
+    .actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:8px}
+    button{
+      appearance:none;border:0;border-radius:12px;padding:12px 16px;font-weight:700;cursor:pointer;
+    }
+    .btn{background:#1f2e4a;color:#cfe3ff}
+    .btn:hover{filter:brightness(1.08)}
+    .btn.primary{background:linear-gradient(135deg,#4f46e5,#0ea5e9);color:white}
+    .help{margin-top:12px;color:var(--muted);font-size:13px}
+    /* resultados */
+    .list{margin-top:22px}
+    .card{
+      background:#0d1626;border:1px solid rgba(255,255,255,.06);
+      padding:16px;border-radius:14px;display:grid;gap:8px;
+    }
+    .card h3{margin:4px 0 2px;font-size:16px}
+    .split{display:flex;gap:10px;flex-wrap:wrap}
+    .tag{
+      background:#142039;border:1px solid rgba(255,255,255,.06);
+      color:#dbe8ff;padding:.25rem .55rem;border-radius:.6rem;font-size:12px
+    }
+    .right{margin-left:auto}
+    .muted{color:var(--muted)}
+    .empty{padding:14px;border:1px dashed rgba(255,255,255,.15);border-radius:12px;text-align:center;color:var(--muted)}
+    .small{font-size:13px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="logo">P</div>
+      <h1>Simulador PAES — Comparador de Opciones</h1>
+      <div class="chips">
+        <span id="apiStatus" class="chip status" style="background: var(--brand)">API: verificando…</span>
+        <span class="chip">
+          Base URL:
+          <input id="baseUrl" type="text" style="width:280px;background:#0d1626;border-color:rgba(255,255,255,.08)"
+                 placeholder="http://127.0.0.1:8000" />
+        </span>
+      </div>
+    </header>
+
+    <section class="panel">
+      <div class="grid cols-3">
+        <div>
+          <label>Año</label>
+          <input id="ano" type="number" value="2025" min="2020" max="2030">
+        </div>
+        <div>
+          <label>Lenguaje</label>
+          <input id="lenguaje" type="number" placeholder="0–1000">
+        </div>
+        <div>
+          <label>Matemáticas (M1)</label>
+          <input id="mat1" type="number" placeholder="0–1000">
+        </div>
+
+        <div>
+          <label>Matemáticas 2 (M2)</label>
+          <input id="mat2" type="number" placeholder="0–1000 (si no la rendiste, deja 0)">
+        </div>
+        <div>
+          <label>Ciencias</label>
+          <input id="ciencias" type="number" placeholder="0–1000">
+        </div>
+        <div>
+          <label>Historia</label>
+          <input id="historia" type="number" placeholder="0 (si no la rinde)">
+        </div>
+
+        <div>
+          <label>NEM</label>
+          <input id="nem" type="number" placeholder="0–1000">
+        </div>
+        <div>
+          <label>Ranking</label>
+          <input id="ranking" type="number" placeholder="0–1000">
+        </div>
+        <div>
+          <label>Límite resultados</label>
+          <select id="limit">
+            <option>10</option><option selected>20</option><option>30</option><option>50</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="grid cols-2" style="margin-top:12px">
+        <div>
+          <label>Universidad (opcional)</label>
+          <input id="universidad" placeholder="Ej: Universidad de Chile">
+        </div>
+        <div>
+          <label>Carrera (opcional, contiene)</label>
+          <input id="carrera" placeholder="Ej: Ingeniería, Derecho, Informática…">
+        </div>
+      </div>
+
+      <div class="actions">
+        <button id="clearBtn" class="btn">Limpiar</button>
+        <button id="simBtn" class="btn primary">Simular</button>
+      </div>
+      <div class="help">Completa tus puntajes y haz clic en “Simular”. Consejo: si no rendiste M2 o Ciencias/Historia, déjalos en 0. El simulador usa tu mejor ponderación según la carrera.</div>
+    </section>
+
+    <section class="list" id="list"></section>
+  </div>
+
+  <script>
+    // ---------- Utilidades ----------
+    const $ = sel => document.querySelector(sel);
+    const $$ = sel => document.querySelectorAll(sel);
+    const badge = $('#apiStatus');
+    const baseInput = $('#baseUrl');
+    const list = $('#list');
+    const DEFAULT_BASE = "http://127.0.0.1:8000";
+
+    function normBase(u){return (u||"").trim().replace(/\/+$/,'')}
+    function toast(msg, kind="err"){
+      badge.textContent = kind==="ok" ? "OK" : "ERROR";
+      badge.style.background = kind==="ok" ? "var(--ok)" : "var(--err)";
+      if(kind!=="ok") console.error(msg); else console.log(msg);
+    }
+    function readNum(id){
+      const v = +$(id).value;
+      return Number.isFinite(v) ? v : 0;
+    }
+    function saveBase(){ localStorage.setItem("paes_api_base", normBase(baseInput.value)); }
+
+    // ---------- Verificación de API ----------
+    async function verifyApi(){
+      const base = normBase(baseInput.value || localStorage.getItem("paes_api_base") || DEFAULT_BASE);
+      baseInput.value = base; saveBase();
+
+      badge.textContent = "verificando…";
+      badge.style.background = "var(--brand)";
+
+      const ctrl = new AbortController();
+      const to = setTimeout(()=>ctrl.abort(), 5000);
+      try{
+        const r = await fetch(${base}/universidades/, {mode:"cors", cache:"no-store", signal: ctrl.signal});
+        clearTimeout(to);
+        if(!r.ok){ toast(HTTP ${r.status}, "err"); return; }
+        toast("API verificada", "ok");
+      }catch(e){
+        clearTimeout(to);
+        toast(e, "err");
+      }
+    }
+
+    // ---------- Render ----------
+    function renderEmpty(msg="Sin resultados con los filtros/puntajes actuales."){
+      list.innerHTML = <div class="empty">${msg}</div>;
+    }
+    function fmt(n){ return n.toLocaleString("es-CL", {maximumFractionDigits:2}); }
+    function renderResults(items){
+      if(!items || !items.length){ renderEmpty(); return; }
+      // ordenar por mayor margen
+      items.sort((a,b)=>(b.margen ?? 0) - (a.margen ?? 0));
+      list.innerHTML = items.map(it => `
+        <div class="card">
+          <div class="split">
+            <h3>${it.universidad || '—'} · ${it.carrera || '—'}</h3>
+            <span class="tag right muted">Año: ${it.ano || '—'}</span>
+          </div>
+          <div class="split small">
+            <span class="tag">Puntaje ponderado: <b>${fmt(it.puntaje_ponderado || 0)}</b></span>
+            <span class="tag">Puntaje corte: <b>${fmt(it.puntaje_corte ?? 0)}</b></span>
+            <span class="tag">Margen: <b>${fmt(it.margen ?? 0)}</b></span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // ---------- Simular ----------
+    async function simular(){
+      const base = normBase(baseInput.value || DEFAULT_BASE);
+      saveBase();
+
+      const body = {
+        ano: readNum('#ano'),
+        lenguaje: readNum('#lenguaje'),
+        matematicas: readNum('#mat1'),
+        matematicas2: readNum('#mat2'),
+        ciencias: readNum('#ciencias'),
+        historia: readNum('#historia'),
+        nem: readNum('#nem'),
+        ranking: readNum('#ranking'),
+        universidad: $('#universidad').value.trim(),
+        carrera: $('#carrera').value.trim(),
+        limit: +$('#limit').value || 20
+      };
+
+      // limpia y deja un loader simple
+      list.innerHTML = <div class="empty">Consultando API…</div>;
+
+      const ctrl = new AbortController();
+      const to = setTimeout(()=>ctrl.abort(), 15000);
+
+      try{
+        const r = await fetch(${base}/simular/, {
+          method:"POST",
+          headers:{"Content-Type":"application/json"},
+          body: JSON.stringify(body),
+          mode:"cors",
+          cache:"no-store",
+          signal: ctrl.signal
+        });
+        clearTimeout(to);
+        if(!r.ok){
+          const txt = await r.text().catch(()=>"(sin cuerpo)");
+          renderEmpty(Error HTTP ${r.status}. ${txt});
+          console.error("Simular falló:", r.status, txt);
+          return;
+        }
+        const data = await r.json();
+        renderResults(data);
+      }catch(e){
+        clearTimeout(to);
+        renderEmpty(String(e));
+        console.error(e);
+      }
+    }
+
+    // ---------- Limpiar ----------
+    function limpiar(){
+      $$('#lenguaje,#mat1,#mat2,#ciencias,#historia,#nem,#ranking').forEach(el=>el.value="");
+      $('#universidad').value = "";
+      $('#carrera').value = "";
+      renderEmpty("Ingrese puntajes y presione Simular.");
+    }
+
+    // ---------- Eventos ----------
+    $('#simBtn').addEventListener('click', simular);
+    $('#clearBtn').addEventListener('click', limpiar);
+    baseInput.addEventListener('change', verifyApi);
+
+    // ---------- Inicio ----------
+    (function init(){
+      baseInput.value = localStorage.getItem("paes_api_base") || DEFAULT_BASE;
+      verifyApi();
+      renderEmpty("Ingrese puntajes y presione Simular.");
+    })();
+  </script>
+</body>
+</html>
