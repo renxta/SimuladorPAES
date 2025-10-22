@@ -1,0 +1,31 @@
+
+
+Instalar dependencias necesarias:
+
+pip install fastapi uvicorn sqlalchemy pymysql python-dotenv pandas openpyxl cryptography
+
+Configuración de conexión MySQL
+
+Archivo: app/db.py
+
+Debe contener una línea como esta:
+
+DB_URL = "mysql+pymysql://paes_user:Paes!1234@localhost:3306/paes"
+
+
+Y si aún no existía el usuario MySQL, se creó desde la consola MySQL con:
+
+CREATE USER 'paes_user'@'localhost' IDENTIFIED BY 'Paes!1234';
+CREATE DATABASE IF NOT EXISTS paes;
+GRANT ALL PRIVILEGES ON paes.* TO 'paes_user'@'localhost';
+FLUSH PRIVILEGES;
+
+
+
+🧩 4️⃣ Creación de tablas
+
+Comando:
+
+python -m app.init_db
+
+python -m app.seed_demre2024
