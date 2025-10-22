@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Simulador PAES</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #111827; color: #f9fafb; margin: 0; padding: 20px; }
+    h1 { color: #60a5fa; }
+    .chip { display: inline-block; padding: 4px 10px; border-radius: 999px; background: #1f2937; margin-left: 10px; font-size: 0.9rem; }
+    label { display:block; margin-top: 10px; }
+    input, select { width: 100%; padding: 6px; margin-top: 4px; border-radius: 6px; border: none; }
+    button { margin-top: 15px; padding: 8px 14px; border: none; border-radius: 6px; cursor: pointer; }
+    button#simular { background: #3b82f6; color: #fff; }
+    button#limpiar { background: #6b7280; color: #fff; margin-left: 10px; }
+    #resultados { margin-top: 20px; }
+    .ok { color:#34d399; }
+    .error { color:#f87171; }
+  </style>
+</head>
+<body>
+  <h1>
+    Simulador PAES — Comparador de Opciones
+    <span class="chip">API: <span id="apiState">verificando...</span></span>
+    <span class="chip">Base URL: <span id="apiBase"></span></span>
+  </h1>
+
+  <form id="simForm">
+    <label>Año <input type="number" name="ano" value="2025" required></label>
+    <label>Lenguaje <input type="number" name="lenguaje" value="700"></label>
+    <label>Matemáticas (M1) <input type="number" name="matematicas" value="700"></label>
+    <label>Matemáticas (M2) <input type="number" name="matematicas2" value="0"></label>
+    <label>Ciencias <input type="number" name="ciencias" value="680"></label>
+    <label>Historia <input type="number" name="historia" value="0"></label>
+    <label>NEM <input type="number" name="nem" value="650"></label>
+    <label>Ranking <input type="number" name="ranking" value="700"></label>
+    <label>Universidad (opcional) <input type="text" name="universidad" placeholder="Ej: Universidad de Chile"></label>
+    <label>Carrera (opcional) <input type="text" name="carrera" placeholder="Ej: Ingeniería, Derecho"></label>
+    <label>Límite resultados 
+      <select name="limit">
+        <option value="10">10</option>
+        <option value="20" selected>20</option>
+        <option value="50">50</option>
+      </select>
+    </label>
+    <button type="submit" id="simular">Simular</button>
+    <button type="button" id="limpiar">Limpiar</button>
+  </form>
+
+  <div id="resultados"></div>
+
+  <script>
+    const $ = (s) => document.querySelector(s);
+
+    // Autodetecta la URL de la API
+    const API_BASE = (location.origin.startsWith('http'))
+      ? location.origin
+      : 'http://127.0.0.1:8000';
+    $('#apiBase').textContent = API_BASE;
+
+    // Verificador de API
+    async function checkApi(){
+      try{
+        const r = await fetch(API_BASE + '/');
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        $('#apiState').textContent = 'OK';
+        $('#apiState').className = 'ok';
+      }catch(e){
+        $('#apiState').textContent = 'no disponible (' + (e.message||'') + ')';
+        $('#apiState').className = 'error';
+      }
+    }
+
+    // Formulario
+    $('#simForm').addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      const data = Object.fromEntries(new FormData(e.target).entries());
+      data.ano = parseInt(data.ano);
+      data.lenguaje = parseFloat(data.lenguaje);
+      data.matematicas = parseFloat(data.matematicas);
+      data.matematicas2 = parseFloat(data.matematicas2);
+      data.ciencias = parseFloat(data.ciencias);
+      data.historia = parseFloat(data.historia);
+      data.nem = parseFloat(data.nem);
+      data.ranking = parseFloat(data.ranking);
+      data.limit = parseInt(data.limit);
+
+      try{
+        const r = await fetch(API_BASE + '/simular/', {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body: JSON.stringify(data)
+        });
+        if(!r.ok) throw new Error('HTTP ' + r.status);
+        const res = await r.json();
+        renderResultados(res);
+      }catch(err){
+        $('#resultados').innerHTML = <p style="color:red;">Error: ${err.message}</p>;
+      }
+    });
+
+    // Botón limpiar
+    $('#limpiar').addEventListener('click', ()=>{
+      $('#simForm').reset();
+      $('#resultados').innerHTML='';
+    });
+
+    // Mostrar resultados
+    function renderResultados(arr){
+      if(!arr.length){
+        $('#resultados').innerHTML = "<p>No hay resultados</p>";
+        return;
+      }
+      let html = "<h2>Resultados</h2><ul>";
+      arr.forEach(r=>{
+        html += `<li><b>${r.universidad}</b> — ${r.carrera} 
+          | Puntaje corte: ${r.puntaje_corte}
+          | Puntaje ponderado: ${r.puntaje_ponderado}
+          | Margen: ${r.margen}</li>`;
+      });
+      html += "</ul>";
+      $('#resultados').innerHTML = html;
+    }
+
+    // Llamada inicial para verificar API
+    checkApi();
+  </script>
+</body>
+</html>
