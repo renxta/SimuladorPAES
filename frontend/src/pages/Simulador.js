@@ -45,9 +45,10 @@ function Simulador() {
         matematicas2: parseFloat(formData.matematicas2) || 0,
         ciencias: parseFloat(formData.ciencias) || 0,
         historia: parseFloat(formData.historia) || 0,
-        nem: parseFloat(formData.nem) || 0,
-        ranking: parseFloat(formData.ranking) || 0,
+        nem: parseFloat(formData.nem) || 350, // valor por defecto
+        ranking: parseFloat(formData.ranking) || 350, // valor por defecto
       };
+
 
       // ✅ Validación flexible: se requiere Lenguaje o Matemática, más NEM y Ranking
       if (
