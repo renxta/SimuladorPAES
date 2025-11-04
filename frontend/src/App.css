@@ -342,3 +342,94 @@ button {
 }
 
 }
+/* ==== INICIO (BOTÓN CENTRAL Y TARJETAS) ==== */
+.boton-central-container {
+  text-align: center;
+  margin: 2.5rem 0 3rem 0;
+}
+
+.boton-central {
+  display: inline-block;
+  background-color: #8b0000;
+  color: white;
+  padding: 1rem 2.5rem;
+  border-radius: 40px;
+  font-size: 1.3rem;
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: 0 4px 12px rgba(139, 0, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+.boton-central:hover {
+  background-color: #a50000;
+  transform: scale(1.07);
+  box-shadow: 0 6px 15px rgba(139, 0, 0, 0.4);
+}
+
+/* ==== TARJETAS ==== */
+.cards-container {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.card {
+  background-color: #fff;
+  border-radius: 15px;
+  width: 320px;
+  padding: 1rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  transform: scale(1.03);
+}
+
+.card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.card p {
+  margin-top: 0.8rem;
+  color: #4a0000;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+/* ==== CORRECCIÓN DE ALINEACIÓN EN INICIO ==== */
+.inicio-container {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.intro {
+  max-width: 900px;       /* límite para que no se estire demasiado */
+  margin: 0 auto;         /* centra horizontalmente */
+  text-align: center;     /* centra el texto */
+  line-height: 1.6;       /* mejora la lectura */
+}
+
+.titulo {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #6b0000;
+  margin-bottom: 1rem;
+}
+
+.descripcion {
+  font-size: 1.1rem;
+  color: #4a0000;
+  margin: 0 auto 1rem auto;
+}
+
+.invitacion {
+  font-weight: 600;
+  margin-top: 1rem;
+  color: #4a0000;
+}

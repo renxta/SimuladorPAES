@@ -11,7 +11,7 @@ function Simulador() {
     matematicas2: "",
     ciencias: "",
     historia: "",
-    area:"",
+    area: "",
     nem: "",
     ranking: "",
   });
@@ -49,9 +49,13 @@ function Simulador() {
         ranking: parseFloat(formData.ranking) || 0,
       };
 
-      // Verificar si hay campos vacíos
-      if (Object.values(payload).some((value) => value === 0)) {
-        alert("Por favor, asegúrate de que todos los campos estén completos.");
+      // ✅ Validación flexible: se requiere Lenguaje o Matemática, más NEM y Ranking
+      if (
+        (!payload.lenguaje && !payload.matematicas) || // si faltan ambas
+        !payload.nem ||
+        !payload.ranking
+      ) {
+        alert("Debes ingresar al menos Lenguaje o Matemática, además de NEM y Ranking.");
         setLoading(false);
         return;
       }

@@ -1,7 +1,7 @@
 // src/pages/Inicio.js
 import React from "react";
+import { Link } from "react-router-dom";
 import "../App.css";
-import "./Inicio.css"; // 👈 Archivo separado para estilos propios
 
 function Inicio() {
   return (
@@ -17,6 +17,13 @@ function Inicio() {
         <p className="invitacion">
           ¡Únete a nosotros y prepárate para alcanzar tus metas académicas!
         </p>
+
+        {/* 🔹 BOTÓN CENTRAL GRANDE */}
+        <div className="boton-central-container">
+          <Link to="/simulador" className="boton-central">
+            🚀 Comenzar Simulación
+          </Link>
+        </div>
       </section>
 
       <section className="destacados">
@@ -53,4 +60,3 @@ function Inicio() {
 }
 
 export default Inicio;
-

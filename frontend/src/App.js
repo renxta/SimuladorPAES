@@ -26,7 +26,6 @@ function App() {
           <Route path="/" element={<Inicio />} />
           <Route path="/simulador" element={<Simulador />} />
           <Route path="/opciones" element={<Opciones />} />
-          <Route path="/detalles" element={<Detalles />} />
         </Routes>
       </main>
 
